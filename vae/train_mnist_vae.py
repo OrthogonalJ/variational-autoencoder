@@ -32,6 +32,7 @@ TEST_BUF = 10000
 ONLY_INCLUDE_DIGITS = None
 LEARNING_RATE = 1e-4
 DATA_SHAPE = [28, 28, 1]
+BETA = 1.0
 
 BASE_EXPORT_DIR = './data/debug'
 
@@ -88,7 +89,8 @@ def main():
         model=mnist_vae, 
         dataset=mnist_train_dataset, 
         num_epoch=NUM_EPOCH,
-        optimizer=mnist_optimizer)
+        optimizer=mnist_optimizer,
+        beta=BETA)
 
     exp_name = 'vae_{}'.format(current_timestamp())
     export_dir = os.path.join(BASE_EXPORT_DIR, exp_name)

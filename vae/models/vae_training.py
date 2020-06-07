@@ -15,7 +15,7 @@ def log_normal_pdf(sample, mean, logvar, raxis=1):
       -.5 * ((sample - mean) ** 2. * tf.exp(-logvar) + logvar + log2pi),
       axis=raxis)
 
-def compute_loss(model, data, latent_vars):
+def compute_loss(model, data, latent_vars, beta):
     mean, logvar = model.encode(data)
     
     neg_kl = 0.5 * tf.reduce_sum(
@@ -27,7 +27,7 @@ def compute_loss(model, data, latent_vars):
             logits=data_logits, labels=data)
     logpx_z = -tf.reduce_sum(cross_ent, axis=[1, 2, 3])
 
-    return -tf.reduce_mean(neg_kl + logpx_z)
+    return -tf.reduce_mean(beta * neg_kl + logpx_z)
 
 
 #def compute_loss(model, data, latent_vars):
@@ -50,7 +50,7 @@ def compute_loss(model, data, latent_vars):
 
 
 @tf.function
-def train_step(model, optimizer, data):
+def train_step(model, optimizer, data, beta):
     with tf.GradientTape() as tape:
         latent_vars = model.sample_latent_posterior(data)
         loss = compute_loss(model, data, latent_vars)
@@ -61,13 +61,13 @@ def train_step(model, optimizer, data):
     return loss
 
 
-def train_vae(model, dataset, num_epoch, optimizer):
+def train_vae(model, dataset, num_epoch, optimizer, beta=1.0):
     loss_metric = keras.metrics.Mean('loss', dtype=tf.float32)
     
     epoch_logs = []
     for epoch_idx in tqdm(range(num_epoch)):
         for batch_data in dataset:
-            loss = train_step(model, optimizer, batch_data)
+            loss = train_step(model, optimizer, batch_data, beta)
             
             loss_metric(loss)
         
