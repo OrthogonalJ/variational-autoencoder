@@ -15,30 +15,44 @@ def log_normal_pdf(sample, mean, logvar, raxis=1):
       -.5 * ((sample - mean) ** 2. * tf.exp(-logvar) + logvar + log2pi),
       axis=raxis)
 
-
 def compute_loss(model, data, latent_vars):
     mean, logvar = model.encode(data)
     
-    # kl = 0.5 * tf.reduce_sum(
-    #     1.0 + logvar - tf.math.square(mean) - tf.math.exp(logvar),
-    #     axis=-1)
+    neg_kl = 0.5 * tf.reduce_sum(
+        1.0 + logvar - tf.math.square(mean) - tf.math.exp(logvar),
+        axis=-1)
 
     data_logits = model.decode(latent_vars)
     cross_ent = tf.nn.sigmoid_cross_entropy_with_logits(
             logits=data_logits, labels=data)
     logpx_z = -tf.reduce_sum(cross_ent, axis=[1, 2, 3])
 
-    logpz = log_normal_pdf(latent_vars, 0.0, 0.0)
-    logqz_x = log_normal_pdf(latent_vars, mean, logvar)
-    
-    return -tf.reduce_mean(logpx_z + logpz - logqz_x)
-    #return -tf.reduce_mean(kl - logpx_z)
+    return -tf.reduce_mean(neg_kl + logpx_z)
+
+
+#def compute_loss(model, data, latent_vars):
+#    mean, logvar = model.encode(data)
+#    
+#    # kl = 0.5 * tf.reduce_sum(
+#    #     1.0 + logvar - tf.math.square(mean) - tf.math.exp(logvar),
+#    #     axis=-1)
+#
+#    data_logits = model.decode(latent_vars)
+#    cross_ent = tf.nn.sigmoid_cross_entropy_with_logits(
+#            logits=data_logits, labels=data)
+#    logpx_z = -tf.reduce_sum(cross_ent, axis=[1, 2, 3])
+#
+#    logpz = log_normal_pdf(latent_vars, 0.0, 0.0)
+#    logqz_x = log_normal_pdf(latent_vars, mean, logvar)
+#    
+#    return -tf.reduce_mean(logpx_z + logpz - logqz_x)
+#    #return -tf.reduce_mean(kl - logpx_z)
 
 
 @tf.function
 def train_step(model, optimizer, data):
-    latent_vars = model.sample_latent_posterior(data)
     with tf.GradientTape() as tape:
+        latent_vars = model.sample_latent_posterior(data)
         loss = compute_loss(model, data, latent_vars)
         tf.debugging.check_numerics(loss, 'loss')
     gradients = tape.gradient(loss, model.trainable_variables)

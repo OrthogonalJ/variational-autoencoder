@@ -14,20 +14,20 @@ from vae.utils import coalesce_none, create_dir_if_missing, current_timestamp
 from vae.models.vae_training import train_vae
 from vae.models.vae import VariationalAutoEncoder
 
-SEED = 42
-random.seed(SEED)
-np.random.seed(SEED)
-tf.random.set_seed(SEED)
+#SEED = 42
+#random.seed(SEED)
+#np.random.seed(SEED)
+#tf.random.set_seed(SEED)
 
 #tf.debugging.enable_check_numerics()
 
 
 #### CONSTANTS ####
 
-NUM_EPOCH = 10
-LATENT_DIM = 2
+NUM_EPOCH = 100
+LATENT_DIM = 20
 TRAIN_BUF = 60000
-BATCH_SIZE = 32
+BATCH_SIZE = 100
 TEST_BUF = 10000
 ONLY_INCLUDE_DIGITS = None
 LEARNING_RATE = 1e-4
