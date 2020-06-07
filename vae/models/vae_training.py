@@ -45,7 +45,7 @@ def train_vae(model, dataset, num_epoch, optimizer):
             
             loss_metric(loss)
         
-        epoch_log_row = {'loss_mean': loss_metric.result().numpy()}
+        epoch_log_row = {'loss_mean': float(loss_metric.result().numpy())}
         print(epoch_log_row)
         epoch_logs.append(epoch_log_row)
     

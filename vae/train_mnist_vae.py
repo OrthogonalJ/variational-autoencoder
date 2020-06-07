@@ -19,7 +19,7 @@ random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 
-tf.debugging.enable_check_numerics()
+#tf.debugging.enable_check_numerics()
 
 
 #### CONSTANTS ####
@@ -98,7 +98,7 @@ def main():
     tf.saved_model.save(mnist_vae, model_export_dir)
 
     with open(os.path.join(export_dir, 'epoch-logs.json'), 'w') as fd:
-        json.dump(mnist_logs, fd)
+        json.dump(json.dumps(mnist_logs), fd)
 
     #plt.plot([row['loss_mean'] for row in mnist_logs])
 
