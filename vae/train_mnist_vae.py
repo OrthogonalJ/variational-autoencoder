@@ -100,6 +100,8 @@ def main():
     with open(os.path.join(export_dir, 'epoch-logs.json'), 'w') as fd:
         json.dump(json.dumps(mnist_logs), fd)
 
+    print('DONE!')
+
     #plt.plot([row['loss_mean'] for row in mnist_logs])
 
     #latent_vars = mnist_vae.sample_latent_prior(10)
