@@ -8,22 +8,34 @@ from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+def log_normal_pdf(sample, mean, logvar, raxis=1):
+  log2pi = tf.math.log(2. * np.pi)
+  return tf.reduce_sum(
+      -.5 * ((sample - mean) ** 2. * tf.exp(-logvar) + logvar + log2pi),
+      axis=raxis)
+
+
 def compute_loss(model, data, latent_vars):
     mean, logvar = model.encode(data)
-
-    kl = 0.5 * tf.reduce_sum(
-        1.0 + logvar - tf.math.square(mean) - tf.math.exp(logvar),
-        axis=-1)
     
+    # kl = 0.5 * tf.reduce_sum(
+    #     1.0 + logvar - tf.math.square(mean) - tf.math.exp(logvar),
+    #     axis=-1)
+
     data_logits = model.decode(latent_vars)
     cross_ent = tf.nn.sigmoid_cross_entropy_with_logits(
             logits=data_logits, labels=data)
     logpx_z = -tf.reduce_sum(cross_ent, axis=[1, 2, 3])
+
+    logpz = log_normal_pdf(latent_vars, 0.0, 0.0)
+    logqz_x = log_normal_pdf(latent_vars, mean, logvar)
     
-    return -tf.reduce_mean(kl - logpx_z)
+    return -tf.reduce_mean(logpx_z + logpz - logqz_x)
+    #return -tf.reduce_mean(kl - logpx_z)
 
 
-@tf.function
+#@tf.function
 def train_step(model, optimizer, data):
     latent_vars = model.sample_latent_posterior(data)
     with tf.GradientTape() as tape:
