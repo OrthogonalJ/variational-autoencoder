@@ -94,8 +94,9 @@ def main():
     create_dir_if_missing(export_dir)
     
     model_export_dir = os.path.join(export_dir, 'model')
+    mnist_vae.save_model(model_export_dir)
     #create_dir_if_missing(model_export_dir)
-    tf.saved_model.save(mnist_vae, model_export_dir)
+    #tf.saved_model.save(mnist_vae, model_export_dir)
 
     with open(os.path.join(export_dir, 'epoch-logs.json'), 'w') as fd:
         json.dump(json.dumps(mnist_logs), fd)
