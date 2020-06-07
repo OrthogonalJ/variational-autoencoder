@@ -20,7 +20,7 @@ def compute_loss(model, data, latent_vars):
             logits=data_logits, labels=data)
     logpx_z = -tf.reduce_sum(cross_ent, axis=[1, 2, 3])
     
-    return -tf.reduce_mean(kl + logpx_z)
+    return -tf.reduce_mean(kl - logpx_z)
 
 
 @tf.function
