@@ -24,13 +24,13 @@ tf.random.set_seed(SEED)
 
 #### CONSTANTS ####
 
-NUM_EPOCH = 2
-LATENT_DIM = 50
-TRAIN_BUF = 1000 #60000
-BATCH_SIZE = 64
+NUM_EPOCH = 1000
+LATENT_DIM = 2
+TRAIN_BUF = 60000
+BATCH_SIZE = 100
 TEST_BUF = 10000
 ONLY_INCLUDE_DIGITS = None
-LEARNING_RATE = 1e-2
+LEARNING_RATE = 1e-4
 DATA_SHAPE = [28, 28, 1]
 
 BASE_EXPORT_DIR = './data/debug'
@@ -61,7 +61,8 @@ def preprocess_mnist_images_and_labels(images, labels, max_obs=None):
     
     image_dataset = tf.data.Dataset.from_tensor_slices(images) \
         .shuffle(num_obs) \
-        .batch(BATCH_SIZE)
+        .batch(BATCH_SIZE) \
+        .prefetch(1)
     
     return image_dataset, images, labels
 
