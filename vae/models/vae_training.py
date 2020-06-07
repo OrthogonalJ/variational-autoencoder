@@ -35,7 +35,7 @@ def compute_loss(model, data, latent_vars):
     #return -tf.reduce_mean(kl - logpx_z)
 
 
-#@tf.function
+@tf.function
 def train_step(model, optimizer, data):
     latent_vars = model.sample_latent_posterior(data)
     with tf.GradientTape() as tape:
