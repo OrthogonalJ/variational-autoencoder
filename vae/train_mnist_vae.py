@@ -24,9 +24,9 @@ tf.random.set_seed(SEED)
 
 #### CONSTANTS ####
 
-NUM_EPOCH = 2
+NUM_EPOCH = 100
 LATENT_DIM = 50
-TRAIN_BUF = 1000 # 60000
+TRAIN_BUF = 60000
 BATCH_SIZE = 64
 TEST_BUF = 10000
 ONLY_INCLUDE_DIGITS = [1,3,8]
@@ -121,4 +121,5 @@ def main():
 #### MAIN ####
 
 if __name__ == '__main__':
-    main()    
+    main()
+
